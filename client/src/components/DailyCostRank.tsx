@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Asset } from '../types';
 import { differenceInDays, parseISO } from 'date-fns';
-import { TrendingUp, ArrowDownWideNarrow, ArrowUpNarrowWide, ArrowUpDown } from 'lucide-react';
+import { TrendingUp, ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
 import clsx from 'clsx';
 
 interface Props {
@@ -12,7 +12,7 @@ type SortField = 'daily' | 'real';
 type SortOrder = 'desc' | 'asc';
 
 export const DailyCostRank: React.FC<Props> = ({ assets }) => {
-  const [sortField, setSortField] = useState<SortField>('daily');
+  const [sortField, setSortField] = useState<SortField>('real');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   const getMetrics = (asset: Asset) => {

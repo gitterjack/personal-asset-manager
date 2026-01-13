@@ -1,7 +1,7 @@
 import axios from 'axios';
-import type { NewAsset, Asset } from './types';
+import type { NewAsset } from './types';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api';
 
 export const fetchAssets = async () => {
   const response = await axios.get(`${API_URL}/assets`);

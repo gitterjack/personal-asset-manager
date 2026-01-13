@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api';
 
 export const LoginPage: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);

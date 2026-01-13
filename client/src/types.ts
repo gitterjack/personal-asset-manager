@@ -9,6 +9,7 @@ export interface Asset {
   photo_url?: string;
   location?: string;
   notes?: string;
+  warranty_expiry?: string;
   created_at?: string;
 }
 

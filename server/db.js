@@ -13,8 +13,22 @@ const db = new sqlite3.Database(dbPath, (err) => {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           username TEXT UNIQUE NOT NULL,
           password TEXT NOT NULL,
+          gender TEXT,
+          age INTEGER,
+          job TEXT,
+          location TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
+        )`, (err) => {
+            if (!err) {
+                // Auto-migration for existing tables
+                const columns = ['gender', 'age', 'job', 'location'];
+                columns.forEach(col => {
+                    db.run(`ALTER TABLE users ADD COLUMN ${col} TEXT`, (err) => {
+                        // Ignore error if column exists
+                    });
+                });
+            }
+        });
 
         db.run(`CREATE TABLE IF NOT EXISTS assets (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
