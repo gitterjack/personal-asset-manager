@@ -1,10 +1,44 @@
 import React, { useState } from 'react';
-import { User, Users, FileText, CreditCard, Activity, MapPin, Phone, Mail, Edit2, ScanFace, Mic, Video, Fingerprint, Sparkles, FileSignature, CheckCircle2, Bot, MessageSquare } from 'lucide-react';
+import { User, Users, FileText, CreditCard, Activity, MapPin, Phone, Mail, Edit2, ScanFace, Mic, Video, Fingerprint, Sparkles, FileSignature, CheckCircle2, Bot, MessageSquare, X, RefreshCw, Plus } from 'lucide-react';
 import clsx from 'clsx';
+
+interface FamilyMember {
+    id: string;
+    name: string;
+    title: string; // e.g., "Father", "Grandma"
+    avatarSeed: string;
+    role: 'grandparent_paternal' | 'grandparent_maternal' | 'parent' | 'self' | 'spouse' | 'child' | 'sibling';
+    gender: 'male' | 'female';
+}
 
 export const ProfilePage: React.FC = () => {
     const [activeSubTab, setActiveSubTab] = useState<'basic' | 'family' | 'assets' | 'avatar'>('avatar');
     const [avatarAuth, setAvatarAuth] = useState(false);
+
+    // Family Tree State
+    const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
+        { id: '1', name: '爷爷', title: '爷爷', avatarSeed: 'Grandpa', role: 'grandparent_paternal', gender: 'male' },
+        { id: '2', name: '奶奶', title: '奶奶', avatarSeed: 'Grandma', role: 'grandparent_paternal', gender: 'female' },
+        { id: '3', name: '父亲', title: '父亲', avatarSeed: 'Dad', role: 'parent', gender: 'male' },
+        { id: '4', name: '母亲', title: '母亲', avatarSeed: 'Mom', role: 'parent', gender: 'female' },
+        { id: '5', name: '我', title: '本人', avatarSeed: 'Me', role: 'self', gender: 'male' },
+        { id: '6', name: '妻子', title: '配偶', avatarSeed: 'Spouse', role: 'spouse', gender: 'female' },
+        { id: '7', name: '儿子', title: '儿子', avatarSeed: 'Son', role: 'child', gender: 'male' },
+        { id: '8', name: '女儿', title: '女儿', avatarSeed: 'Daughter', role: 'child', gender: 'female' },
+    ]);
+
+    const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
+
+    const handleSaveMember = () => {
+        if (!editingMember) return;
+        setFamilyMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
+        setEditingMember(null);
+    };
+
+    const randomizeAvatar = () => {
+        if (!editingMember) return;
+        setEditingMember({ ...editingMember, avatarSeed: Math.random().toString(36).substring(7) });
+    };
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-24">
@@ -296,106 +330,61 @@ export const ProfilePage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Tab 2: Family Tree (Ming Dynasty) */}
+                {/* Tab 2: Family Tree (Dynamic) */}
                 {activeSubTab === 'family' && (
-                    <div className="flex flex-col items-center justify-center py-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex flex-col items-center py-10 animate-in fade-in slide-in-from-bottom-2 duration-300 relative">
 
-                        {/* Generation 1: Zhu Yuanzhang & Empress Ma */}
-                        <div className="flex gap-8 mb-10 relative">
-                            <div className="flex flex-col items-center">
-                                <div className="w-24 h-24 rounded-full bg-yellow-100 border-4 border-yellow-500 shadow-lg flex items-center justify-center text-yellow-700 font-bold mb-2 text-2xl z-10">
-                                    太祖
-                                </div>
-                                <span className="text-lg font-bold text-gray-900 bg-white px-3 py-1 rounded shadow-sm border border-yellow-200">朱元璋</span>
-                                <span className="text-xs text-gray-500 mt-1">洪武大帝</span>
-                            </div>
-
-                            {/* Marriage Connector */}
-                            <div className="self-center w-8 h-px bg-yellow-300 relative">
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-red-400 rounded-full"></div>
-                            </div>
-
-                            <div className="flex flex-col items-center">
-                                <div className="w-24 h-24 rounded-full bg-pink-50 border-4 border-pink-200 shadow-lg flex items-center justify-center text-pink-700 font-bold mb-2 text-2xl z-10">
-                                    马后
-                                </div>
-                                <span className="text-lg font-bold text-gray-900 bg-white px-3 py-1 rounded shadow-sm border border-pink-100">马皇后</span>
-                                <span className="text-xs text-gray-500 mt-1">孝慈高皇后</span>
-                            </div>
+                        {/* Generation 1: Grandparents */}
+                        <div className="flex gap-12 mb-12 relative">
+                            {familyMembers.filter(m => m.role.startsWith('grandparent')).map(member => (
+                                <FamilyNode key={member.id} member={member} onEdit={() => setEditingMember(member)} />
+                            ))}
+                            {/* Connector Line Gen 1 -> Gen 2 */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 h-12 w-px bg-gray-300"></div>
                         </div>
 
-                        {/* Vertical Connector from Parents */}
-                        <div className="w-px h-8 bg-yellow-300 -mt-6 mb-6"></div>
-
-                        {/* Branch Line for Siblings */}
-                        <div className="w-full max-w-2xl h-px bg-yellow-300 mb-6 relative">
-                            <div className="absolute -top-3 left-[10%] w-px h-4 bg-yellow-300"></div>
-                            <div className="absolute -top-3 left-[35%] w-px h-4 bg-yellow-300"></div>
-                            <div className="absolute -top-3 left-[60%] w-px h-4 bg-yellow-300"></div>
-                            <div className="absolute -top-3 right-[10%] w-px h-4 bg-yellow-300"></div>
+                        {/* Generation 2: Parents */}
+                        <div className="flex gap-16 mb-12 relative">
+                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 h-12 w-px bg-gray-300"></div>
+                            {familyMembers.filter(m => m.role === 'parent').map(member => (
+                                <FamilyNode key={member.id} member={member} onEdit={() => setEditingMember(member)} />
+                            ))}
+                            {/* Horizontal Connector for Parents */}
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-32 h-px bg-gray-200 -z-10"></div>
+                            {/* Connector Line Gen 2 -> Gen 3 */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 h-12 w-px bg-gray-300"></div>
                         </div>
 
-                        {/* Generation 2: Siblings */}
-                        <div className="flex justify-between w-full max-w-3xl px-4 gap-4">
+                        {/* Generation 3: Me & Spouse */}
+                        <div className="flex gap-16 mb-12 relative">
+                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 h-12 w-px bg-gray-300"></div>
+                            {familyMembers.filter(m => m.role === 'self' || m.role === 'spouse').map(member => (
+                                <FamilyNode key={member.id} member={member} onEdit={() => setEditingMember(member)} isSelf={member.role === 'self'} />
+                            ))}
+                            {/* Horizontal Connector for Spouses */}
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-32 h-px bg-pink-100 -z-10"></div>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-8 h-8 bg-red-50 rounded-full flex items-center justify-center -z-0 text-red-300 text-xs">❤</div>
 
-                            {/* Zhu Biao (Eldest) */}
-                            <div className="flex flex-col items-center relative group">
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-px h-10 bg-yellow-300"></div>
-                                <div className="w-16 h-16 rounded-full bg-gray-100 border-4 border-gray-300 shadow-md flex items-center justify-center text-gray-600 font-bold mb-2 z-10">
-                                    太子
-                                </div>
-                                <span className="text-sm font-bold text-gray-800">朱标</span>
-                                <span className="text-[10px] text-gray-500 mt-1">长子 (懿文)</span>
+                            {/* Connector Line Gen 3 -> Gen 4 */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 h-12 w-px bg-gray-300"></div>
+                        </div>
 
-                                {/* Connector to Gen 3 */}
-                                <div className="w-px h-6 bg-gray-300 mt-2"></div>
-                                <div className="flex flex-col items-center mt-1">
-                                    <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold text-xs">
-                                        惠帝
+                        {/* Generation 4: Children */}
+                        <div className="relative pt-4">
+                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full max-w-[200px] h-px bg-gray-300"></div>
+                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 h-8 w-px bg-gray-300"></div>
+
+                            <div className="flex gap-8 justify-center">
+                                {familyMembers.filter(m => m.role === 'child').map((member) => (
+                                    <div key={member.id} className="relative">
+                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 h-4 w-px bg-gray-300"></div>
+                                        <FamilyNode member={member} onEdit={() => setEditingMember(member)} />
                                     </div>
-                                    <span className="text-xs text-gray-600 mt-1">朱允炆</span>
-                                </div>
+                                ))}
+                                <button className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-300 hover:bg-blue-50 transition-all">
+                                    <Plus size={24} />
+                                </button>
                             </div>
-
-                            {/* Zhu Shuang */}
-                            <div className="flex flex-col items-center relative opacity-70">
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-px h-10 bg-yellow-300"></div>
-                                <div className="w-14 h-14 rounded-full bg-gray-50 border-2 border-gray-200 flex items-center justify-center text-gray-400 font-bold mb-2">
-                                    秦王
-                                </div>
-                                <span className="text-sm font-bold text-gray-600">朱樉</span>
-                                <span className="text-[10px] text-gray-400">次子</span>
-                            </div>
-
-                            {/* Zhu Gang */}
-                            <div className="flex flex-col items-center relative opacity-70">
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-px h-10 bg-yellow-300"></div>
-                                <div className="w-14 h-14 rounded-full bg-gray-50 border-2 border-gray-200 flex items-center justify-center text-gray-400 font-bold mb-2">
-                                    晋王
-                                </div>
-                                <span className="text-sm font-bold text-gray-600">朱棡</span>
-                                <span className="text-[10px] text-gray-400">三子</span>
-                            </div>
-
-                            {/* Zhu Di (The Emperor) */}
-                            <div className="flex flex-col items-center relative">
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-px h-10 bg-yellow-300"></div>
-                                <div className="w-20 h-20 rounded-full bg-yellow-100 border-4 border-yellow-500 shadow-md flex items-center justify-center text-yellow-700 font-bold mb-2 text-xl z-10">
-                                    成祖
-                                </div>
-                                <span className="text-sm font-bold text-gray-900 bg-yellow-50 px-2 rounded">朱棣</span>
-                                <span className="text-[10px] text-gray-500 mt-1">四子 (永乐)</span>
-
-                                {/* Connector to Gen 3 */}
-                                <div className="w-px h-6 bg-yellow-300 mt-2"></div>
-                                <div className="flex flex-col items-center mt-1">
-                                    <div className="w-12 h-12 rounded-full bg-yellow-50 border border-yellow-200 flex items-center justify-center text-yellow-600 font-bold text-xs">
-                                        仁宗
-                                    </div>
-                                    <span className="text-xs text-gray-600 mt-1">朱高炽</span>
-                                </div>
-                            </div>
-
                         </div>
 
                     </div>
@@ -455,6 +444,110 @@ export const ProfilePage: React.FC = () => {
                 )}
 
             </div>
+
+            {/* Edit Modal */}
+            {editingMember && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 shadow-2xl">
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="font-bold text-gray-900">编辑家族成员</h3>
+                            <button onClick={() => setEditingMember(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+                            {/* Avatar Section */}
+                            <div className="flex flex-col items-center">
+                                <div className="relative group cursor-pointer" onClick={randomizeAvatar}>
+                                    <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100">
+                                        <img
+                                            src={`https://api.dicebear.com/9.x/notionists/svg?seed=${editingMember.avatarSeed}`}
+                                            alt="Avatar"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <RefreshCw className="text-white" size={24} />
+                                    </div>
+                                    <div className="absolute bottom-0 right-0 bg-blue-500 text-white p-1.5 rounded-full shadow-sm border-2 border-white">
+                                        <RefreshCw size={12} />
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2">点击头像随机生成新外观</p>
+                            </div>
+
+                            {/* Form Fields */}
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">称谓 (我的视角)</label>
+                                    <input
+                                        type="text"
+                                        value={editingMember.title}
+                                        onChange={(e) => setEditingMember({ ...editingMember, title: e.target.value })}
+                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-gray-800"
+                                        placeholder="例如: 爷爷, 爸爸"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">真实姓名</label>
+                                    <input
+                                        type="text"
+                                        value={editingMember.name}
+                                        onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-gray-800"
+                                        placeholder="请输入姓名"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 border-t border-gray-100 flex gap-3">
+                            <button
+                                onClick={() => setEditingMember(null)}
+                                className="flex-1 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors"
+                            >
+                                取消
+                            </button>
+                            <button
+                                onClick={handleSaveMember}
+                                className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+                            >
+                                保存修改
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+
+// Helper Component for Node
+const FamilyNode = ({ member, onEdit, isSelf = false }: { member: FamilyMember, onEdit: () => void, isSelf?: boolean }) => (
+    <div className="flex flex-col items-center group relative cursor-pointer" onClick={onEdit}>
+        <div className={clsx(
+            "w-20 h-20 rounded-full border-4 shadow-md flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 bg-white relative",
+            isSelf ? "border-blue-500 shadow-blue-200" : "border-white"
+        )}>
+            <img
+                src={`https://api.dicebear.com/9.x/notionists/svg?seed=${member.avatarSeed}`}
+                alt={member.name}
+                className="w-full h-full"
+            />
+            {/* Hover Edit Overlay */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <Edit2 size={16} className="text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
+            </div>
+        </div>
+        <div className="mt-3 flex flex-col items-center">
+            <span className={clsx(
+                "text-sm font-bold px-2 py-0.5 rounded shadow-sm border",
+                isSelf ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-800 border-gray-100"
+            )}>
+                {member.title}
+            </span>
+            <span className="text-[10px] text-gray-400 mt-1 font-medium">{member.name}</span>
+        </div>
+    </div>
+);

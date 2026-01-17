@@ -9,13 +9,14 @@ import { AICardGenerator } from './components/AICardGenerator'
 import { ProfileSettings } from './components/ProfileSettings'
 import { CommunityPage } from './components/CommunityPage'
 import { DigitalAssetPage } from './components/DigitalAssetPage'
-import { BusinessModelPage } from './components/BusinessModelPage'
+
 import { MembershipPage } from './components/MembershipPage'
 import { ProfilePage } from './components/ProfilePage'
+import { SophonPage } from './components/SophonPage'
 import { AIAssistant } from './components/AIAssistant'
 import { LoginPage } from './LoginPage'
 import { AuthProvider, useAuth } from './AuthContext'
-import { LogOut, ChevronLeft, ChevronRight, Sparkles, Settings, Compass, LayoutDashboard, Lock, Briefcase, Activity, User, Crown } from 'lucide-react'
+import { LogOut, ChevronLeft, ChevronRight, Sparkles, Settings, Compass, LayoutDashboard, Lock, User, Crown, Bot, Activity } from 'lucide-react'
 import clsx from 'clsx'
 
 function AppContent() {
@@ -26,7 +27,7 @@ function AppContent() {
     const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
     const [showAICard, setShowAICard] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
-    const [activeTab, setActiveTab] = useState<'assets' | 'community' | 'digital' | 'business' | 'profile' | 'membership'>('assets');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'community' | 'digital' | 'profile' | 'membership' | 'sophon'>('dashboard');
 
     const loadData = async () => {
         try {
@@ -88,22 +89,22 @@ function AppContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col">
-            <header className="bg-white shadow-sm z-30 px-6 py-2 flex justify-between items-center sticky top-0">
+        <div className="flex h-screen bg-gray-50 text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-900">
+            {/* Header */}
+            <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-6 shadow-sm/50 backdrop-blur-md bg-white/90">
                 <div className="flex items-center space-x-3">
-                    <div className="bg-gray-900 p-1.5 rounded-lg text-white flex items-center justify-center">
-                        <Activity size={20} />
-                        <span className="font-black tracking-widest ml-1 text-sm">ALIVE</span>
+                    <div className="bg-gray-900 p-1.5 rounded-lg text-white flex items-center justify-center shadow-lg shadow-gray-200">
+                        <Activity size={20} className="text-white" />
                     </div>
-                    <h1 className="text-lg font-black text-gray-900 hidden md:block tracking-widest">活着</h1>
+                    <span className="font-black text-lg tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 ml-1">A·LIVE</span>
                 </div>
 
                 <div className="hidden md:flex space-x-1 bg-gray-100 p-1 rounded-lg">
                     <button
-                        onClick={() => setActiveTab('assets')}
+                        onClick={() => setActiveTab('dashboard')}
                         className={clsx(
                             "px-4 py-1.5 rounded-md text-sm font-bold flex items-center transition-all",
-                            activeTab === 'assets' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                            activeTab === 'dashboard' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                         )}
                     >
                         <LayoutDashboard size={16} className="mr-2" /> 实物资产
@@ -116,6 +117,15 @@ function AppContent() {
                         )}
                     >
                         <Lock size={16} className="mr-2" /> 数字资产
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('sophon')}
+                        className={clsx(
+                            "px-4 py-1.5 rounded-md text-sm font-bold flex items-center transition-all",
+                            activeTab === 'sophon' ? "bg-white text-pink-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                        )}
+                    >
+                        <Bot size={16} className="mr-2" /> SOPHON
                     </button>
                     <button
                         onClick={() => setActiveTab('community')}
@@ -143,15 +153,6 @@ function AppContent() {
                         )}
                     >
                         <Crown size={16} className="mr-2" /> 会员体系
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('business')}
-                        className={clsx(
-                            "px-4 py-1.5 rounded-md text-sm font-bold flex items-center transition-all",
-                            activeTab === 'business' ? "bg-white text-emerald-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
-                        )}
-                    >
-                        <Briefcase size={16} className="mr-2" /> 商业模式
                     </button>
                 </div>
 
@@ -185,9 +186,9 @@ function AppContent() {
                 </div>
             </header>
 
-            <div className="flex flex-1 overflow-hidden relative pb-16 md:pb-0">
+            <div className="flex flex-1 overflow-hidden relative pb-16 md:pb-0 pt-16">
 
-                {activeTab === 'assets' ? (
+                {activeTab === 'dashboard' ? (
                     <>
                         <div
                             className={clsx(
@@ -245,27 +246,27 @@ function AppContent() {
                     <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
                         <DigitalAssetPage />
                     </main>
+                ) : activeTab === 'sophon' ? (
+                    <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+                        <SophonPage />
+                    </main>
                 ) : activeTab === 'profile' ? (
                     <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
                         <ProfilePage />
                     </main>
-                ) : activeTab === 'membership' ? (
-                    <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
-                        <MembershipPage />
-                    </main>
                 ) : (
                     <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
-                        <BusinessModelPage />
+                        <MembershipPage />
                     </main>
                 )}
             </div>
 
             <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 z-20 pb-safe">
                 <button
-                    onClick={() => setActiveTab('assets')}
+                    onClick={() => setActiveTab('dashboard')}
                     className={clsx(
                         "flex flex-col items-center p-2 rounded-lg w-full",
-                        activeTab === 'assets' ? "text-blue-600" : "text-gray-400"
+                        activeTab === 'dashboard' ? "text-blue-600" : "text-gray-400"
                     )}
                 >
                     <LayoutDashboard size={24} />
@@ -280,6 +281,16 @@ function AppContent() {
                 >
                     <Compass size={24} />
                     <span className="text-[10px] mt-1 font-bold">发现</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('sophon')}
+                    className={clsx(
+                        "flex flex-col items-center p-2 rounded-lg w-full",
+                        activeTab === 'sophon' ? "text-pink-600" : "text-gray-400"
+                    )}
+                >
+                    <Bot size={24} />
+                    <span className="text-[10px] mt-1 font-bold">SOPHON</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('digital')}
@@ -311,16 +322,7 @@ function AppContent() {
                     <Crown size={24} />
                     <span className="text-[10px] mt-1 font-bold">会员</span>
                 </button>
-                <button
-                    onClick={() => setActiveTab('business')}
-                    className={clsx(
-                        "flex flex-col items-center p-2 rounded-lg w-full",
-                        activeTab === 'business' ? "text-emerald-600" : "text-gray-400"
-                    )}
-                >
-                    <Briefcase size={24} />
-                    <span className="text-[10px] mt-1 font-bold">模式</span>
-                </button>
+
             </div>
 
             <AICardGenerator

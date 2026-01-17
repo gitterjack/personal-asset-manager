@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Asset } from '../types';
-import { Smartphone, Monitor, Laptop, Camera, Headphones, Keyboard, Box, Trash2, MapPin, Car, Gamepad2, Tablet, BookOpen, Pencil, Fish, ArrowDownWideNarrow, ArrowUpNarrowWide, Calendar, DollarSign, TrendingUp, Loader2, Wrench, ShieldCheck, Gauge, Tv, ChevronRight, ChevronDown, Disc, Droplet, Wind, AlertCircle, CheckCircle2, Table, FileSpreadsheet, Save, X, Edit2 } from 'lucide-react';
+import { Smartphone, Monitor, Laptop, Camera, Headphones, Keyboard, Box, Trash2, MapPin, Car, Gamepad2, Tablet, BookOpen, Pencil, Fish, ArrowDownWideNarrow, ArrowUpNarrowWide, Calendar, DollarSign, TrendingUp, Loader2, Wrench, ShieldCheck, Gauge, Tv, ChevronRight, ChevronDown, Droplet, Wind, AlertCircle, CheckCircle2, Save, X, Edit2 } from 'lucide-react';
 import { differenceInDays, parseISO, format } from 'date-fns';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -60,7 +60,7 @@ interface TireConfig {
     statusColor: string; // Tailwind class
 }
 
-const TireMaintenanceSection: React.FC<{ assetId: number }> = ({ assetId }) => {
+const TireMaintenanceSection: React.FC<{ assetId: number }> = ({ }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tires, setTires] = useState<TireConfig[]>([
         { id: '1', position: '左前轮', positionCode: 'Front-L', brand: '马牌 MC6', spec: '98V', dot: '1925', dotWeekYear: '2025年第19周', status: '准新胎，负责转向手感', statusColor: 'text-green-600' },
